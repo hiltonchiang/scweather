@@ -26,3 +26,9 @@ You can use pip to install all of those Python modules.
 
 The source code can be found on nc2csv.py
 
+## Output:
+
+The converted csv file is named by replacing original extension '.nc' with '.csv'. The keys of the converted csv file are based on original NetCDF variables names. For 1D type variables like 'time', 'level', 'latitude' or 'longitude', those names are not changed. For Geo2D type variables, extra columns with keys named by suffixing names found in NetCDF varialbe's dimensions. For example, variable 'A' with dimensions ('B', 'C', 'D') will generate 3 columnes with keys 'A.B', 'A.C' and 'A.D'
+plus A's own data column.
+
+
