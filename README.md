@@ -1,5 +1,5 @@
 ---
-title: nc2csv
+title: [nc2csv](https://github.com/hiltonchiang/scweather)
 ---
 
 nc2csv is a Python program to convert Netcdf file (extension .nc) into a csv file. The key Python library used is named netCDF4 (version 4).
@@ -9,7 +9,7 @@ Usage:
 Usage: nc2csv fname.nc [-d|--develop]
 
 ```
-It takes longer to build csv file if input file is very large, to make it quicker, add `-d` or `--develop` at the end of file name to build partial parts of the entire content.
+It takes longer to build csv file if input file is very large; for development purpose, add `-d` or `--develop` at the end of the command line to build partial parts of the entire file.
 
 The Python libraries used:
 ```python
