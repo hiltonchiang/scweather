@@ -44,9 +44,6 @@ for arg in args:
 print("fname ",f)
 print("develop ", develop)
 ############# read netCDF file ###############
-## fn=r'/home/hiltonchiang/Downloads/rhum.2003.nc'
-##fn=r'/home/hiltonchiang/opt/webDesign/apps/netcdf/python-netCDF/rhum4.2003.nc'
-# f=sys.argv[1]
 fn = os.path.basename(f)
 if (fn.split('.')[0] != fn.split('.')[-1]):
     fn = fn.replace('.'+fn.split('.')[-1],'')
