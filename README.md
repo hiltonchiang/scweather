@@ -6,7 +6,7 @@ nc2csv is a Python program to convert Netcdf file (extension .nc) into a csv fil
 
 Usage:
 ```bash
-Usage: nc2cvs fname.nc [-d|--develop]
+Usage: nc2csv fname.nc [-d|--develop]
 
 ```
 It takes longer to build csv file if input file is very large, to make it quicker, add `-d` or `--develop` at the end of file name to build partial parts of the entire content.
