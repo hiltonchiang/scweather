@@ -25,7 +25,7 @@ f = None
 develop = False
 
 def usage():
-   print(bcolors.HEADER+"Usage: netcdf2cvs fname.nc [-d|--develop]"+bcolors.ENDC)
+   print(bcolors.HEADER+"Usage: nc2cvs fname.nc [-d|--develop]"+bcolors.ENDC)
 
 argv = sys.argv[1:]
 
