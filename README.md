@@ -38,3 +38,8 @@ zc,time,latitude,longitude,mean_wspeed.time,mean_wspeed.latitude,mean_wspeed.lon
 ```
 
 Variable mean_wspeed has dimensions('time', 'latidute', 'longitude'), so there are 3 + 1 columns with keys ('mean_wspeed.time', 'mean_wspeed.latitude', 'mean_wspeed.longitude', 'mean_wspeed') are generated.
+
+## Download
+
+A [scweather-main.zip](https://github.com/hiltonchiang/scweather/archive/refs/heads/main.zip) is available in github for downloading.
+
