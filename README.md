@@ -11,7 +11,7 @@ title: nc2csv
 Usage: nc2csv fname.nc [-d|--develop]
 
 ```
-It takes longer to build csv file if input file is very large; for development purpose, add `-d` or `--develop` at the end of the command line to build partial parts of the entire file.
+It takes times to convert a large NetCDF file into a csv file. For development purpose, if you want to see the result quickly, you can add `-d` or `--develop` at the end of the command line to only build partial parts of the content.
 
 ## Python modules 
 
