@@ -37,3 +37,4 @@ zc,time,latitude,longitude,mean_wspeed.time,mean_wspeed.latitude,mean_wspeed.lon
  -145.0,7548.0,-28.696022,142.168788,7548.0,-28.696022,153.598788,7.988132,7548.0,-145.0
 ```
 
+Variable mean_wspeed has dimensions('time', 'latidute', 'longitude'), so there are 3 + 1 columns with keys ('mean_wspeed.time', 'mean_wspeed.latitude', 'mean_wspeed.longitude', 'mean_wspeed') are generated.
