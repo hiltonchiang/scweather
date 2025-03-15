@@ -4,6 +4,7 @@
 import numpy as np
 from netCDF4 import Dataset
 import sys
+import getopt
 import os
 import math
 import pandas as pd
@@ -20,24 +21,32 @@ class bcolors:
   BOLD = '\033[1m'
   UNDERLINE = '\033[4m'
 
+f = None
+develop = False
+
 def usage():
-   print(bcolors.HEADER+"Usage: netcdf2cvs fname.nc"+bcolors.ENDC)
+   print(bcolors.HEADER+"Usage: netcdf2cvs fname.nc [-d|--develop]"+bcolors.ENDC)
 
-if len(sys.argv) <= 1:
-   print(bcolors.FAIL+"You need to input a file name!"+bcolors.ENDC)
-   usage()
-   quit()
+argv = sys.argv[1:]
 
-if len(sys.argv) != 2:
-   print(bcolors.FAIL+"You only need to input a file name!"+bcolors.ENDC)
-   usage()
-   quit()
+try:
+  opts, args = getopt.getopt(argv, "d:",["develop"])
+except:
+  usage()
+  quit()
 
+for arg in args:
+  if arg in ['-d', '--develop']:
+    develop = True
+  else:
+    f = arg
+
+print("fname ",f)
+print("develop ", develop)
 ############# read netCDF file ###############
 ## fn=r'/home/hiltonchiang/Downloads/rhum.2003.nc'
 ##fn=r'/home/hiltonchiang/opt/webDesign/apps/netcdf/python-netCDF/rhum4.2003.nc'
-f=sys.argv[1]
-#fn = os.path.basename(f).split('.')[0]
+# f=sys.argv[1]
 fn = os.path.basename(f)
 if (fn.split('.')[0] != fn.split('.')[-1]):
     fn = fn.replace('.'+fn.split('.')[-1],'')
@@ -92,7 +101,6 @@ for v in vars_nc:
     ### find NaN value and build new Arraya wiht elements indexed by
     ### idx
     for idx, x in np.ndenumerate(fn_nc.variables[v]):
-      print(idx)
       if (math.isnan(x) == False):
         for i in range(len(dms)):
           BD[AA[i]].append(fn_nc.variables[AA[i]][idx[i]].data.item())
@@ -101,9 +109,10 @@ for v in vars_nc:
     ### comment out following three lines for
     ### production.
     ### !!! !!!
-      cnt = cnt + 1
-      if cnt == 10000:
-        break
+        if develop == True:
+          cnt = cnt + 1
+          if cnt == 10000:
+            break
     for i in range(len(AA)):
       n = v + '.' + AA[i]
       D[n] = BD[AA[i]]
