@@ -29,7 +29,7 @@ import inspect
 You can use pip to install all of those Python modules.
 ## Source Code
 
-The source code of nc2csv.py can be found in this repo, or you can download directly see [here](#Download)
+The source code of nc2csv.py can be found in this repo, or you can download directly; see [here](#Download)
 
 An old version source code is show here for reference only, may not be the latest one.
 
