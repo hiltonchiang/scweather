@@ -29,9 +29,9 @@ import inspect
 You can use pip to install all of those Python modules.
 ## Source Code
 
-The source code can be found on nc2csv.py in this repo, or you cand download by clicking [here](https://github.com/hiltonchiang/scweather)
+The source code of nc2csv.py can be found in this repo, or you can download directly by clicking [here](https://github.com/hiltonchiang/scweather)
 
-A copy of an old version is show here for reference only, may not be the latest version.
+An old version source code is show here for reference only, may not be the latest one.
 
 ```python
 # -*- coding: utf-8 -*-
