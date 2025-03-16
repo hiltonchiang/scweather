@@ -1,5 +1,5 @@
 ---
-title: nc2csv v2.0
+title: nc2csv 2.0
 ---
 
 ## nc2csv
@@ -144,5 +144,7 @@ A [scweather-main.zip](https://github.com/hiltonchiang/scweather/archive/refs/he
 
 ## ChangeLog
 
-    Use xarray and generate multiple csv files with indexes
+2025-03-16
+Use xarray and generate multiple csv files with indexes
+
 
