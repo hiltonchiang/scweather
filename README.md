@@ -4,26 +4,22 @@ title: nc2csv
 
 ## nc2csv
 
-[nc2csv](https://github.com/hiltonchiang/scweather) is a Python program to convert Netcdf file (extension .nc) into a csv file. The key Python library used is named netCDF4 (version 4).
+[nc2csv](https://github.com/hiltonchiang/scweather) is a Python program to convert Netcdf file (extension .nc) into a csv file. The key Python library used is named xarray which uses netCDF4 (version 4) and pandas modules.
 
 ## Usage:
 ```bash
-Usage: nc2csv fname.nc [-d|--develop]
+Usage: python nc2csv.py fname.nc
 
 ```
-It takes longer to build csv file if input file is very large; for development purpose, add `-d` or `--develop` at the end of the command line to build partial parts of the entire file.
+It takes longer to build csv file if input file is very large and generated csv files size are huge.
 
 ## Python modules 
 
 The Python libraries used:
 ```python
-import numpy as np
-from netCDF4 import Dataset
 import sys
 import os
-import math
-import pandas as pd
-import inspect
+import xarray as xr
 ```
 
 You can use pip to install all of those Python modules.
@@ -37,14 +33,9 @@ A copy of an old version is show here for reference only, may not be the latest 
 # -*- coding: utf-8 -*-
 
 ############# load packages ###############
-import numpy as np
-from netCDF4 import Dataset
 import sys
-import getopt
 import os
-import math
-import pandas as pd
-import inspect
+import xarray as xr
 
 class bcolors:
   HEADER = '\033[95m'
@@ -57,134 +48,95 @@ class bcolors:
   BOLD = '\033[1m'
   UNDERLINE = '\033[4m'
 
-f = None
-develop = False
 
 def usage():
-   print(bcolors.HEADER+"Usage: nc2csv fname.nc [-d|--develop]"+bcolors.ENDC)
+   print(bcolors.HEADER+"Usage: python nc2csv.py fname.nc"+bcolors.ENDC)
 
-argv = sys.argv[1:]
 
-try:
-  opts, args = getopt.getopt(argv, "d:",["develop"])
-except:
-  usage()
-  quit()
+if len(sys.argv) != 2:
+    usage()
+    quit()
 
-for arg in args:
-  if arg in ['-d', '--develop']:
-    develop = True
-  else:
-    f = arg
-
+f = sys.argv[1]
 print("fname ",f)
-print("develop ", develop)
 ############# read netCDF file ###############
 fn = os.path.basename(f)
 if (fn.split('.')[0] != fn.split('.')[-1]):
     fn = fn.replace('.'+fn.split('.')[-1],'')
 print("base file name : ", fn)
 print("Now reading file : " + bcolors.WARNING + os.path.basename(f) + bcolors.ENDC)
-fn_nc=Dataset(f)
+print("open dataset")
 
-############ file info and variables ##############
-print('The ' +bcolors.WARNING + os.path.basename(f) + bcolors.ENDC + ' has groups : ')
-print("\t",fn_nc.groups)
-print('The ' +bcolors.WARNING + os.path.basename(f) + bcolors.ENDC + ' has dimensions : ')
-print("\t",fn_nc.dimensions)
-print('The ' +bcolors.WARNING + os.path.basename(f) + bcolors.ENDC + ' has following variables  : ')
-vars_nc = list(fn_nc.variables.keys())
-print("\t",vars_nc)
-D = {}
-T = {}
-for v in vars_nc:
-  shp = fn_nc.variables[v].shape
-  dms = fn_nc.variables[v].dimensions
-  print("varialbe " + bcolors.WARNING + v + bcolors.ENDC)
-  print("shape : ", shp)
-  print("max shpe : ", max(shp))
-  #print("shape type : ", type(shp))
-  #print("shape tuple length : ", len(shp))
-  print("dimensios : ", dms)
-  #print("dimensions type : ", type(dms))
-  #print("dimensions tuple length : ", len(dms))
-  print("Attributes:")
-  for i in inspect.getmembers(fn_nc.variables[v]):
-    if not i[0].startswith('_'):
-      if not inspect.ismethod(i[1]):
-        print("\t",i)
+ds = xr.open_dataset(f, engine='netcdf4')
+### print Infos
+print("dataset Info:")
+print(bcolors.WARNING+"ds.dims:"+bcolors.ENDC,ds.dims)
+print(bcolors.WARNING+"ds.sizes:"+bcolors.ENDC,ds.sizes)
+print(bcolors.WARNING+"ds.dtypes:"+bcolors.ENDC,ds.dtypes)
+print(bcolors.WARNING+"ds.data_vars:"+bcolors.ENDC,ds.data_vars)
+print(bcolors.WARNING+"ds.data_vars keys:"+bcolors.ENDC,list(ds.data_vars.keys()))
+print(bcolors.WARNING+"ds.coords:"+bcolors.ENDC,ds.coords)
+print(bcolors.WARNING+"ds.coords keys:"+bcolors.ENDC,list(ds.coords.keys()))
+print(bcolors.WARNING+"ds.attrs:"+bcolors.ENDC,ds.attrs)
+print(bcolors.WARNING+"ds.encoding:"+bcolors.ENDC,ds.encoding)
+print(bcolors.WARNING+"ds.indexes:"+bcolors.ENDC,ds.indexes)
+print(bcolors.WARNING+"ds.chunks:"+bcolors.ENDC,ds.chunks)
+print(bcolors.WARNING+"ds.chunksizes:"+bcolors.ENDC,ds.chunksizes)
+print(bcolors.WARNING+"ds.nbytes:"+bcolors.ENDC,ds.nbytes)
 
-  if (len(shp) == 1): ##1D variable
-    T[v] = fn_nc.variables[v][:]
-    D = T | D
-  else: ## geo-2d
-    AA=[]
-    BD={}
-    CA=[]
-    for i in range(len(dms)):
-      for u in vars_nc:
-        dd = fn_nc.variables[u].dimensions
-        if len(dd) == 1 and dms[i] == dd[0]:
-          AA.append(u)
-          BD[u]=[]
+###
+dsVars=list(ds.data_vars.keys())
 
-    cnt = 0
-    print(AA)
-    print(BD)
-    ### find NaN value and build new Arraya wiht elements indexed by
-    ### idx
-    for idx, x in np.ndenumerate(fn_nc.variables[v]):
-      if (math.isnan(x) == False):
-        for i in range(len(dms)):
-          BD[AA[i]].append(fn_nc.variables[AA[i]][idx[i]].data.item())
-        CA.append(x)
-    ### to save time for test only
-    ### comment out following three lines for
-    ### production.
-    ### !!! !!!
-        if develop == True:
-          cnt = cnt + 1
-          if cnt == 10000:
-            break
-    for i in range(len(AA)):
-      n = v + '.' + AA[i]
-      D[n] = BD[AA[i]]
-    D[v] = CA[:]
-
-##############
-
-# Extract data
-variable_name = vars_nc[3]  # Replace with the actual variable name
-print("converting " + bcolors.WARNING + fn +bcolors.ENDC)
-# data = fn_nc.variables[variable_name][:]
-# Create a pandas DataFrame
-#print('D = ...')
-#print(D)
-df = pd.DataFrame.from_dict(D, orient='index', dtype='object')
-df = df.transpose()
-# Save to CSV
-csvfn=fn + ".csv"
-df.to_csv(csvfn, index=False)
-print("csv file saved : " + bcolors.WARNING + csvfn + bcolors.ENDC)
-# Close the file
-fn_nc.close()
-
+for v in dsVars:
+    print(bcolors.WARNING+"ds.data_vars ["+ v + "] DataArray:" + bcolors.ENDC)
+    df = ds.data_vars[v].to_dataframe().dropna(how='any', axis=0).reset_index()
+    print("dataFrame:")
+    print(df)
+    n = fn+'-' + v + '.csv'
+    print(bcolors.WARNING+"Now generating csv file : " + n + bcolors.ENDC)
+    df.to_csv(n, index=True)
 
 ```
 
 
 ## Output:
 
-The converted csv file is named by replacing original extension '.nc' with '.csv'. The keys of the converted csv file are based on original NetCDF variables names. For 1D type variables like 'time', 'level', 'latitude' or 'longitude', those names are not changed. For Geo2D type variables, extra columns with keys named by suffixing names found in NetCDF varialbe's dimensions. For example, variable 'A' with dimensions ('B', 'C', 'D') will generate 3 columnes with keys 'A.B', 'A.C' and 'A.D'
-plus A's own data column.
+The original netCDF (.nc) file may contain several variables. The number of generated csv files depends on how many variables found in the original netCDF file.
 
-example
-```vim
-zc,time,latitude,longitude,mean_wspeed.time,mean_wspeed.latitude,mean_wspeed.longitude,mean_wspeed
- -145.0,7548.0,-28.696022,142.168788,7548.0,-28.696022,153.598788,7.988132,7548.0,-145.0
+For example, the console output while running nc2csv
+```bash 
+
+$python nc2csv.py test.nc
+
+fname  test.nc
+base file name :  test
+Now reading file : test.nc
+...
+...
+ds.data_vars: Data variables:
+    mean_wspeed  (time, latitude, longitude) float32 43MB ...
+    mean_cur     (time, k, latitude, longitude) float32 724MB ...
+    eta          (time, latitude, longitude) float32 43MB ...
+    salt         (time, k, latitude, longitude) float32 724MB ...
+    temp         (time, k, latitude, longitude) float32 724MB ...
+    wspeed_u     (time, latitude, longitude) float32 43MB ...
+    wspeed_v     (time, latitude, longitude) float32 43MB ...
+    u            (time, k, latitude, longitude) float32 724MB ...
+    v            (time, k, latitude, longitude) float32 724MB ...
+ds.data_vars keys: ['mean_wspeed', 'mean_cur', 'eta', 'salt', 'temp', 'wspeed_u', 'wspeed_v', 'u', 'v']
+
 ```
+The test.nc contains nine Data variables, so totally it will generate nine csv files with names like :
 
-Variable mean_wspeed has dimensions('time', 'latidute', 'longitude'), so there are 3 + 1 columns with keys ('mean_wspeed.time', 'mean_wspeed.latitude', 'mean_wspeed.longitude', 'mean_wspeed') are generated.
+    test-mean_wspeed.csv
+    test-mean_cur.csv
+    test-eta.csv
+    test-salt.csv
+    test-temp.csv
+    test-wspeed_u.csv
+    test-wspeed_v.csv
+    test-u.csv
+    test-v.csv
 
 ## Download
 
