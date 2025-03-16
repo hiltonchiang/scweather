@@ -11,11 +11,7 @@ title: nc2csv
 Usage: python nc2csv.py fname.nc
 
 ```
-<<<<<<< HEAD
 It takes longer to build csv file if input file is very large and generated csv files size are huge.
-=======
-It takes times to convert a large NetCDF file into a csv file. For development purpose, if you want to see the result quickly, you can add `-d` or `--develop` at the end of the command line to only build partial parts of the content.
->>>>>>> 5a9c47a58a30a7e21fef58aa0265f1ae23d07a34
 
 ## Python modules 
 
