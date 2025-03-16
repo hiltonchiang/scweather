@@ -144,7 +144,9 @@ A [scweather-main.zip](https://github.com/hiltonchiang/scweather/archive/refs/he
 
 ## ChangeLog
 
-2025-03-16
+2025-03-16:
 Use xarray and generate multiple csv files with indexes
 
+2025-03-15:
+Use netCDF4 first upload
 
